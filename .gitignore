@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/
+bruteforcer/wordlists/*.txt
+bruteforcer/valid_codes.txt
+bruteforcer/yarn.lock
+bruteforcer/package-lock.json
+wordlists/rockyou.txt
