@@ -1,6 +1,6 @@
 import { loadWordLists } from "./helpers/loadWordLists";
 //@ts-expect-error
-import { processWordLists } from "./bruteforce";
+import { processWordLists } from "./spawnWorkers";
 
 const parseArguments = () => {
     const args = process.argv.slice(2);
