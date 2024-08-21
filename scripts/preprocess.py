@@ -6,6 +6,8 @@ import tarfile
 import gzip
 import shutil
 
+# Removes used words from a new wordlist
+
 def download_wordlists(repo_url, dest_folder):
     os.makedirs(dest_folder, exist_ok=True)
     
