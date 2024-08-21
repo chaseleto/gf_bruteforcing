@@ -10,6 +10,7 @@ This program processes large word lists in parallel using Node.js worker threads
 - **Word Reversing**: Optional feature to reverse each word before processing.
 - **Progress Bar**: Real-time progress bar showing percentage complete, words per second, and active workers.
 - **Automatic Code Reporting**: Automatically sends each found code to a central repository (https://haykam.com/notawebsite/) so you do not need to worry about losing your valid_codes.txt file.
+- **.gz, .zip, .tar unpacker**: Automatically unpacks .gz, .zip and .tar files and uses the text inside for ease of use.
 
 ## Prerequisites
 
