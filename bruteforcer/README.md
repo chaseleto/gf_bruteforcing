@@ -44,7 +44,7 @@ This program processes large word lists in parallel using Node.js worker threads
 
 ### Basic Usage
 
-To process word lists, you need to place the word list files in the bruteforcer/wordlists directory OR pass a parameter 'wordListFolder' and run the program:
+To process word lists, you need to place the word list files in the bruteforcer/wordlists directory OR pass a parameter 'wordlistfolder' and run the program:
 
 ```bash
 yarn start
@@ -62,7 +62,7 @@ By default, the program will process the word lists with a batch size of 10,000 
 You can pass command-line arguments to customize the behavior of the program:
 
 - **reversewords**: Reverse each word before processing.
-- **batchsize**: Set the size of batches to process.
+- **batchsize**: Set the size of batches to process. REDUCING THIS NUMBER WILL SPEED UP THE PROCESSING BUT UTILIZE MORE RESOURCES. ADJUST ACCORDING TO YOUR SPECS.
 - **wordlistfolder** Set the directory containing your wordlist(s)
 - **verbose** Set the verbosity flag to display found codes and errors in the terminal
 
