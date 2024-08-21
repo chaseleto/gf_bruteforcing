@@ -1,8 +1,7 @@
-import fs, { createReadStream, ReadStream } from 'fs';
+import fs from 'fs';
 import path from 'path';
-import zlib, { Gunzip } from 'zlib';
-import tarStream from 'tar-stream';
-import unzipper from 'unzipper';
+import { unpackTar } from './unpackTar';
+import { unpackZip } from './unpackZip';
 
 export const loadWordLists = async (folderPath: string = "./wordlists") => {
     const wordList: string[] = [];
@@ -22,7 +21,7 @@ export const loadWordLists = async (folderPath: string = "./wordlists") => {
             } else if (filename.endsWith('.tar.gz') || filename.endsWith('.tar')) {
                 const baseFilename = filename.replace(/\.tar\.gz$|\.tar$/, '');
                 const extractedFilePath = path.join(fullPath, baseFilename);
-                
+
                 if (fs.existsSync(extractedFilePath)) {
                     continue;
                 }
@@ -54,54 +53,4 @@ export const loadWordLists = async (folderPath: string = "./wordlists") => {
 
     console.log(`Loaded ${wordCount} words from ${wordList.length} files\nWord Lists: ${wordListNames.join(', ')}`);
     return wordList;
-};
-
-const unpackTar = async (tarPath: string, isGzipped: boolean): Promise<string[]> => {
-    const extractedFiles: string[] = [];
-    const extractPath = path.dirname(tarPath);
-    const extract = tarStream.extract();
-
-    return new Promise<string[]>((resolve, reject) => {
-        extract.on('entry', (header, stream, next) => {
-            const filePath = path.join(extractPath, header.name);
-            if (header.type === 'file' && filePath.endsWith('.txt')) {
-                const outputFile = fs.createWriteStream(filePath);
-                stream.pipe(outputFile);
-                extractedFiles.push(filePath);
-            }
-            stream.on('end', next);
-            stream.resume();
-        });
-
-        extract.on('finish', () => resolve(extractedFiles));
-        extract.on('error', reject);
-
-        let fileStream: ReadStream | Gunzip = createReadStream(tarPath);
-        if (isGzipped) {
-            fileStream = fileStream.pipe(zlib.createGunzip()) as unknown as ReadStream;
-        }
-
-        (fileStream as ReadStream).pipe(extract).on('error', reject);
-    });
-};
-
-const unpackZip = async (zipPath: string): Promise<string[]> => {
-    const extractedFiles: string[] = [];
-    const extractPath = path.dirname(zipPath);
-
-    await new Promise<void>((resolve, reject) => {
-        fs.createReadStream(zipPath)
-            .pipe(unzipper.Extract({ path: extractPath }))
-            .on('entry', (entry: any) => {
-                const filePath = path.join(extractPath, entry.path);
-                if (entry.type === 'File' && filePath.endsWith('.txt')) {
-                    extractedFiles.push(filePath);
-                }
-            })
-            //@ts-ignore
-            .on('finish', () => resolve(extractedFiles))
-            .on('error', reject);
-    });
-
-    return extractedFiles;
 };
