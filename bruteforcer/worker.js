@@ -10,11 +10,7 @@ const appendFileAsync = fs.promises.appendFile;
 const maxRetries = 3;
 const retryDelay = 1000;
 
-const tryCode = async (code, reverseWords, verbose, attempt = 1) => {
-    if (reverseWords) {
-        code = code.split('').reverse().join('');
-    }
-
+const tryCode = async (code, verbose, attempt = 1) => {
     const form = new FormData();
     form.append('code', code);
 
@@ -45,18 +41,47 @@ const tryCode = async (code, reverseWords, verbose, attempt = 1) => {
     } catch (error) {
         if (attempt < maxRetries && error.response?.status !== 404) {
             await new Promise(res => setTimeout(res, retryDelay));
-            return tryCode(code, reverseWords, attempt + 1);
+            return tryCode(code, attempt + 1);
         }
     }
 
     parentPort.postMessage({ type: 'progress' })
 };
 
-const workerJob = async ({ words, reverseOption }) => {
+const workerJob = async ({ words, reverseOption, atbashOption }) => {
     for (const word of words) {
-        await tryCode(word, reverseOption);
-    }
-    parentPort.postMessage({ type: 'done' })
-};
+        let processedWord = word;
 
+        if (reverseOption) {
+            processedWord = word.split('').reverse().join('');
+            await tryCode(processedWord);
+        }
+
+        if (atbashOption) {
+            processedWord = atbashCipher(word);
+            await tryCode(processedWord);
+        }
+
+        await tryCode(word);
+    }
+
+    parentPort.postMessage({ type: 'done' });
+};
+const atbashCipher = (word) => {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    const reversedAlphabet = 'zyxwvutsrqponmlkjihgfedcba';
+    let cipheredWord = '';
+
+    for (const char of word) {
+        const lowerChar = char.toLowerCase();
+        const index = alphabet.indexOf(lowerChar);
+        if (index !== -1) {
+            cipheredWord += char === lowerChar ? reversedAlphabet[index] : reversedAlphabet[index].toUpperCase();
+        } else {
+            cipheredWord += char;
+        }
+    }
+
+    return cipheredWord;
+};
 workerJob(workerData);

@@ -12,11 +12,15 @@ let startTime = Date.now();
 let verbose = false;
 const workers = [];
 
-const processWordLists = (filePaths, reverse = false, batchsize = 10000, verbose = false) => {
-    console.log(`Settings: Batch size: ${batchsize}, Reverse words: ${reverse}, Verbose: ${verbose}`);
+const processWordLists = (filePaths, reverse = false, batchsize = 10000, verbose = false, atbash = false) => {
+    console.log(`Settings: Batch size: ${batchsize}, Reverse words: ${reverse}, Atbash: ${atbash}, Verbose: ${verbose}`);
     if (reverse) {
         console.log("Reversing words enabled..");
         reverseOption = true;
+    }
+    if (atbash) {
+        console.log("Atbash enabled..");
+        atbashOption = true;
     }
     batchSize = batchsize;
     verbose = verbose;
@@ -64,7 +68,7 @@ const spawnWorker = (words, progressBar) => {
     activeWorkers++;
 
     const worker = new Worker('./worker.js', {
-        workerData: { words, reverseOption, verbose }
+        workerData: { words, reverseOption, verbose, atbashOption }
     });
 
     worker.on('message', (message) => {

@@ -18,7 +18,7 @@ const main = async () => {
     console.log(args);
     const wordLists = await loadWordLists(args.wordfistfolder || './wordlists');
     
-    await processWordLists(wordLists, args.reversewords, args.batchsize, args.verbose);
+    await processWordLists(wordLists, args.reversewords, args.batchsize, args.verbose, args.atbash);
 };
 
 main()
