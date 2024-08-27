@@ -10,6 +10,7 @@ let completedTasks = 0;
 let activeWorkers = 0;
 let startTime = Date.now();
 let verbose = false;
+let atbashOption = false;
 const workers = [];
 
 const processWordLists = (filePaths, reverse = false, batchsize = 10000, verbose = false, atbash = false) => {
